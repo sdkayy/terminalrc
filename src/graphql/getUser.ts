@@ -8,7 +8,8 @@ export const searchUserQuery = gql`
       exchangeBalances {
         id
         userAddress
-        uniTokenBalance
+        ethDeposited
+        ethWithdrawn
       }
       txs {
         id

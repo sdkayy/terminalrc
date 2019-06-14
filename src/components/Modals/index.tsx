@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { Header, Form, Input, ActionHolder } from './style';
+import { Header, Form, Input, ActionHolder, SuccessBanner, ErrorBanner } from './style';
 import { Button } from '../Button';
 
 interface Props {
@@ -13,6 +13,9 @@ interface State {
   to: string;
   from: string;
   amount: number;
+  submitted: boolean;
+  error: boolean;
+  errorMessage: string;
 }
 
 const customStyles = {
@@ -36,6 +39,9 @@ export default class TransferModal extends React.Component<Props, State> {
     to: '',
     from: '',
     amount: 0,
+    submitted: false,
+    error: false,
+    errorMessage: ''
   }
 
   public change = (e: any) => {
@@ -51,11 +57,35 @@ export default class TransferModal extends React.Component<Props, State> {
 
   public onSubmit = () => {
     const { to, from, amount } = this.state;
-    this.props.onSubmit(to, from, amount);
+    if(to && from && amount > 0) {
+      this.setState({
+        to: '',
+        from: '',
+        amount: 0,
+        submitted: true
+      }, () => {
+        this.props.onSubmit(to, from, amount);
+      })
+    } else {
+      this.setState({
+        error: true,
+        errorMessage: 'Invalid Options, Check again.'
+      })
+    }
   }
 
+  public componentDidUpdate(prevProps: any, prevState: any) {
+    if(this.state.error) {
+      setTimeout(() => this.setState({ error: false }), 5000);
+    }
+
+    if(this.state.submitted) {
+      setTimeout(() => this.setState({ submitted: false }), 5000);
+    }
+  } 
+
   public render() {
-    const { to, from, amount } = this.state;
+    const { to, from, amount , submitted, errorMessage, error} = this.state;
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -65,6 +95,8 @@ export default class TransferModal extends React.Component<Props, State> {
       >
         <Header>Transfer ETH</Header>
         <Form>
+          {submitted && <SuccessBanner>Transfer Complete! <a onClick={this.props.closeModal}>Close Modal</a></SuccessBanner>}
+          {error && <ErrorBanner>{errorMessage}</ErrorBanner>}
           <Input id="to" placeholder={'To Address'} value={to} onChange={this.change} />
           <Input id="from" placeholder={'From Address'} value={from} onChange={this.change} />
           <Input type="number" step="0.00000001" id="amount" placeholder={'Amount'} value={amount} onChange={this.change} />

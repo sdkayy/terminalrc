@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const HoverTransition = {
   hover: {
@@ -46,4 +46,42 @@ export const Input = styled.input`
 export const ActionHolder = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+
+
+export const fadeInOut = keyframes`
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+`;
+
+
+const Banner = styled.div`
+  color: white;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  text-align: center;
+  padding: 12px;
+  animation: ${fadeInOut} 5s ease-in-out;
+`;
+
+export const SuccessBanner = styled(Banner)`
+  background: #3498db;
+`;
+
+export const ErrorBanner = styled(Banner)`
+  background: #e74c3c;
 `;
